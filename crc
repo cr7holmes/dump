@@ -1,0 +1,201 @@
+#include<iostream>
+
+#include<string>
+
+using namespace std;
+
+
+
+string CRCchecksum(string div,string g)
+
+{
+
+  string r;
+
+  int n,k,p1,i,j;
+
+  char q;
+
+
+
+  n=div.length();
+
+  p1=g.length();
+
+  k=n+1-p1;
+
+  r="";
+
+
+
+  for(i=0;i<k;++i)
+
+  {
+
+    q=div[i];
+
+    if(q=='1')
+
+    {
+
+      p1=i;
+
+      for(j=0;j<n-k+1;++j,++p1)
+
+      {
+
+        if(div[p1]==g[j])
+
+        div[p1]='0';
+
+        else
+
+        div[p1]='1';
+
+      }
+
+    }
+
+  }
+
+
+
+  for(i=k;i<n;++i)
+
+  r+=div[i];
+
+
+
+  return r;
+
+}
+
+
+
+string append(string dw,int n,int k)
+
+{
+
+  int i;
+
+
+
+  for(i=0;i<n-k;++i)
+
+  dw+="0";
+
+
+
+  return dw;
+
+}
+
+
+
+void introError(string&cw,int p1)
+
+{
+
+  if(cw[p1-1]=='0')
+
+  cw[p1-1]='1';
+
+  else
+
+  cw[p1-1]='0';
+
+}
+
+
+
+int main()
+
+{
+
+  int n,k,ch;
+
+  string dw,cw,div,g,r;
+
+
+
+  g="10001000000100001";
+
+
+
+  cout<<"\nEnter data : ";
+
+  cin>>dw;
+
+  cout<<"\nGenerating polynomial : "<<g;
+
+
+
+  k=dw.length();
+
+  n=k+g.length()-1;
+
+
+
+  div=append(dw,n,k);
+
+
+
+  r=CRCchecksum(div,g);
+
+
+
+  cout<<"\n CRC checksum is : "<<r;
+
+
+
+  cw=dw+r;
+
+  cout<<"\nFinal codeword transmitted is : "<<cw;
+
+
+
+  cout<<"\nTest error detection 0<yes> 1<no>? : ";
+
+  cin>>ch;
+
+
+
+  if(ch==1)
+
+  {
+
+    cout<<"\n CRC checksum is : ";
+
+    r=CRCchecksum(cw,g);
+
+    cout<<r<<"\nNo error detected";
+
+  }
+
+  else
+
+  {
+
+    cout<<"\nEnter the position where error is to be inserted : ";
+
+    cin>>ch;
+
+
+
+    introError(cw,ch);
+
+
+
+    cout<<"\nErroneous data : "<<cw;
+
+    r=CRCchecksum(cw,g);
+
+    cout<<"\n CRC checksum is : "<<r;
+
+    cout<<"\nError detected";
+
+  }
+
+  return 0;
+
+}
