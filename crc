@@ -1,201 +1,161 @@
-#include<iostream>
-
-#include<string>
-
-using namespace std;
-
-
-
-string CRCchecksum(string div,string g)
-
-{
-
-  string r;
-
-  int n,k,p1,i,j;
-
-  char q;
-
-
-
-  n=div.length();
-
-  p1=g.length();
-
-  k=n+1-p1;
-
-  r="";
-
-
-
-  for(i=0;i<k;++i)
-
-  {
-
-    q=div[i];
-
-    if(q=='1')
-
-    {
-
-      p1=i;
-
-      for(j=0;j<n-k+1;++j,++p1)
-
-      {
-
-        if(div[p1]==g[j])
-
-        div[p1]='0';
-
-        else
-
-        div[p1]='1';
-
-      }
-
-    }
-
-  }
-
-
-
-  for(i=k;i<n;++i)
-
-  r+=div[i];
-
-
-
-  return r;
-
-}
-
-
-
-string append(string dw,int n,int k)
-
-{
-
-  int i;
-
-
-
-  for(i=0;i<n-k;++i)
-
-  dw+="0";
-
-
-
-  return dw;
-
-}
-
-
-
-void introError(string&cw,int p1)
-
-{
-
-  if(cw[p1-1]=='0')
-
-  cw[p1-1]='1';
-
-  else
-
-  cw[p1-1]='0';
-
-}
-
-
-
-int main()
-
-{
-
-  int n,k,ch;
-
-  string dw,cw,div,g,r;
-
-
-
-  g="10001000000100001";
-
-
-
-  cout<<"\nEnter data : ";
-
-  cin>>dw;
-
-  cout<<"\nGenerating polynomial : "<<g;
-
-
-
-  k=dw.length();
-
-  n=k+g.length()-1;
-
-
-
-  div=append(dw,n,k);
-
-
-
-  r=CRCchecksum(div,g);
-
-
-
-  cout<<"\n CRC checksum is : "<<r;
-
-
-
-  cw=dw+r;
-
-  cout<<"\nFinal codeword transmitted is : "<<cw;
-
-
-
-  cout<<"\nTest error detection 0<yes> 1<no>? : ";
-
-  cin>>ch;
-
-
-
-  if(ch==1)
-
-  {
-
-    cout<<"\n CRC checksum is : ";
-
-    r=CRCchecksum(cw,g);
-
-    cout<<r<<"\nNo error detected";
-
-  }
-
-  else
-
-  {
-
-    cout<<"\nEnter the position where error is to be inserted : ";
-
-    cin>>ch;
-
-
-
-    introError(cw,ch);
-
-
-
-    cout<<"\nErroneous data : "<<cw;
-
-    r=CRCchecksum(cw,g);
-
-    cout<<"\n CRC checksum is : "<<r;
-
-    cout<<"\nError detected";
-
-  }
-
-  return 0;
-
-}
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--
+1.
+a)
+i) SELECT Sid FROM SAILORS WHERE Sid IN (SELECT Sid FROM RESERVES);
+ii) SELECT Sid FROM SAILORS WHERE Sid IN (SELECT Sid FROM RESERVES AS R,
+BOATS AS B WHERE R.Bid = B.Bid AND B.Color IN ("Red", "Green"));
+iii) SELECT Sid FROM SAILORS WEHRE Sid NOT IN (SELECT Sid FROM RESERVES);
+b)
+i) db.restaurant.find( { cuisine: "Italian", "Address.State":
+"Bangalore" }, { name: 1, Address: 1 } );
+ii) db.restaurant.find( { cuisine: "North Indian Thali", "Address.State":
+"Bangalore" }, { name: 1, Address: 1, lm: 1 } );
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--
+2.
+a)
+i) SELECT Fname, Lname FROM EMPLOYEE WHERE Salary > ALL (SELECT Salary
+FROM EMPLOYEE WHERE Dno = 5);
+ii) SELECT ESSN FROM WORKS_ON WHERE Pno IN (1,2,3);
+iii) SELECT Pno, SUM(Hours) FROM WORKS_ON GROUP BY Pno;
+b)
+i) db.restaurant.find( { cuisine: "North Indian Thali", "Address.State":
+"Bangalore" }, { name: 1, Address: 1, lm: 1 } );
+ii) db.restaurant.find( { "address.state": "Bangalore" }, { name:1,
+address:1, famousDish:1 } );
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--
+3.
+a)
+i) SELECT Emp_ID FROM EMPLOYEE WHERE Salary = (SELECT MAX(Salary) FROM
+EMPLOYEE);
+ii) SELECT Aircraft_name FROM AIRCRAFT WHERE Aircraft_ID IN (SELECT
+Aircraft_ID FROM CERTIFIED AS C, EMPLOYEE AS E WHERE C.Emp_ID = E.Emp_ID
+AND E.Salary>50000)
+AND Aircraft_ID NOT IN (SELECT Aircraft_ID FROM CERTIFIED AS C,
+EMPLOYEE AS E WHERE C.Emp_ID = E.Emp_ID AND E.Salary<50000);
+iii) SELECT Emp_ID FROM EMPLOYEE WHERE Emp_ID NOT IN (SELECT Emp_ID FROM
+CERTIFIED);
+b)
+i) db.restaurant.find( { "address.state": "Bangalore" }, { name:1,
+address:1, famousDish:1 } );
+ii) db.restaurant.find( { "address.state": "Bangalore", online: "Yes" },
+{ name:1, address:1, famousDish:1 } );
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--
+4.
+a)
+i) SELECT Sid FROM SUPPLIER WHERE Sid IN (SELECT Sid FROM SHIPMENT AS S,
+PART AS P WHERE P.PID = S.PID AND P.Color = "Green");
+ii) SELECT Sname, COUNT(*) FROM SUPPLIER AS S, PART AS P, SHIPMENT AS R
+WHERE S.Sid = R.Sid AND P.PID = R.PID GROUP BY Sname;
+iii) UPDATE PART SET Color = "Yellow" WHERE PID IN (SELECT PID FROM
+SHIPMENT WHERE Sid = 3);
+b)
+i) db.tourist.find( { "Address.state": "Karnataka" } );
+ii) db.tourist.find( { "Address.state": "Kerala" }, { accomodation:0,
+food:0 } );
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--
+5.
+a)
+i) SELECT Ename FROM EMPLOYEE WHERE Emp_ID IN (SELECT Emp_ID FROM
+CERTIFIED AS C, AIRCRAFT AS A WHERE C.Aircraft_ID = A.Aircraft_ID AND
+Aircraft_name LIKE "%Boeing%");
+ii) SELECT * FROM AIRCRAFT ORDER BY Cruising_range ASC;
+iii) SELECT Ename FROM EMPLOYEE WHERE Emp_ID IN (SELECT Emp_ID FROM
+CERTIFIED AS C, AIRCRAFT AS A WHERE C.Aircraft_ID = A.Aircraft_ID AND
+Cruising_range > 3000) AND Emp_ID
+NOT IN (SELECT Emp_ID FROM CERTIFIED AS C, AIRCRAFT AS A WHERE
+C.Aircraft_ID = A.Aircraft_ID AND Aircraft_name LIKE "%Boeing%");
+b)
+i) db.tourist.find( { "Address.state": "Kerala" }, { accomodation:0,
+food:0 );
+ii) db.tourist.aggregate( [ { $sort: { "Address.state": 1 } } ] );
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--
+6.
+a)
+i) SELECT Dname, AVG(Salary) FROM EMPLOYEE AS E, DEPARTMENT AS D WHERE
+E.Dno = D.Dnumber GROUP BY Dname;
+ii) SELECT Fname, Lname FROM EMPLOYEE WHERE SSN IN (SELECT ESSN FROM
+DEPENDENT WHERE ESSN IN (SELECT MgrSSN FROM DEPARTMENT));
+iii) SELECT * FROM DEPARTMENT WHERE Dname LIKE "%tech%";
+b)
+i) db.tourist.find( { "Address.state": "Karnataka" } );
+ii) db.tourist.aggregate( [ { $sort: { "Address.state": 1 } } ] );
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--
+7.
+a)
+i) SELECT DISTINCT(Regno) FROM CAR WHERE Regno IN (SELECT Regno FROM
+PARTICIPATED);
+ii) SELECT Regno, Model FROM CAR WHERE Regno IN (SELECT Regno FROM
+PARTICIPATED WHERE damageamount = (SELECT MAX(damageamount) FROM
+PARTICIPATED));
+iii) SELECT name, COUNT(*) FROM PERSON AS P, OWNS AS O WHERE P.driver_id#
+= O.driver_id# GROUP BY name;
+b)
+i) db.movies.find( { Actor_name: "John", year: 2018 } );
+ii) db.movies.find( { Director_name: "Ram" }, { Actor_name: 1, type: 1 }
+);
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--
+8.
+a)
+i) SELECT Ground FROM MATCH WHERE Team1 = "Australia" ORDER BY Ground;
+ii) SELECT * FROM MATCH WHERE MatchId IN (SELECT MatchId FROM BATTING
+WHERE Pid = (SELECT Pid FROM PLAYER WHERE Lname = "Dhoni"));
+iii) SELECT Fname, Lname FROM PLAYER WHERE Pid IN (SELECT Pid FROM BATTING
+WHERE MatchId = '2689');
+b)
+i) db.movies.find ( { Actor_name : { $in : ["John", "Elly"] }, year:
+2012 } );
+ii) db.movies.find( { Actor_name: "Ram" }, {film_title: 1, type: 1}
+).sort( { film_title: 1} );
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--
+9.
+a)
+i) SELECT Cname FROM CUSTOMER WHERE Cust# IN (SELECT Cust# FROM ORDER
+GROUP BY Cust# HAVING COUNT(*)>=2);
+ii) SELECT odate, SUM(ord-Amt) FROM ORDER GROUP BY odate;
+iii) SELECT * FROM CUSTOMER WHERE Cust# IN (SELECT Cust# FROM ORDER WHERE
+ord-Amt = (SELECT MAX(ord-Amt) FROM ORDER));
+b)
+i) db.movies.find( { Actor_name: "John", year: 2018 } );
+ii) db.movies.find( { director: "Ram" }, { Actor_name: 1, type: 1 });
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--
+10.
+a)
+i) SELECT cname, COUNT(order#) FROM CUSTOMER LEFT JOIN ORDER ON
+CUSTOMER.Cust# = ORDER.Cust# WHERE city = "Bangalore" GROUP BY Cname;
+/* Assuming they mean quantity of items >=3 */
+ii) SELECT Cname FROM CUSTOMER WHERE Cust# IN (SELECT Cust# FROM ORDER AS
+O, ORDER-ITEM AS OI WHERE O.order# = OI.order# GROUP BY Cust# HAVING
+SUM(qty) >=3);
+/* Assuming they mean the items themselves */
+ii) SELECT Cname FROM CUSTOMER WHERE Cust# IN (SELECT Cust# FROM ORDER AS
+O, ORDER-ITEM AS OI WHERE O.order# = OI.order# GROUP BY Cust# HAVING
+COUNT(Item#) >=3);
+iii) SELECT Cname FROM CUSTOMER WHERE Cust# NOT IN (SELECT Cust# FROM
+ORDER AS O, ORDER-ITEM AS OI WHERE O.order# = OI.order# WHERE Item# = 10);
+b)
+i) db.movies.find ( { Actor_name : { $in : ["John", "Elly"] }, year:
+2012 } );
+ii) db.movies.find( { Actor_name: "Ram" }, {film_title: 1, type: 1}
+).sort( { film_title: 1} );
+--------------------------------------------------------------------------
+-------------------
